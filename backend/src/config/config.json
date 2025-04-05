@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "root",
+    "password": "root",
+    "database": "despesas_db",
+    "host": "database",
+    "dialect": "postgres",
+    "port": 5432
+  },
+  "test": {
+    "username": "root",
+    "password": "root",
+    "database": "test_despesas_db",
+    "host": "database",
+    "dialect": "postgres",
+    "port": 5432
+  },
+  "production": {
+    "username": "root",
+    "password": "root",
+    "database": "prod_despesas_db",
+    "host": "database",
+    "dialect": "postgres",
+    "port": 5432
+  }
+}

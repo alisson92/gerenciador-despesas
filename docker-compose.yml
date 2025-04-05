@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  # Serviço do Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend-container
+    stdin_open: true
+    ports:
+      - "3001:3000" # Expondo o React no host na porta 3001
+    depends_on:
+      - backend # Aguarda o backend iniciar
+
+  # Serviço do Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend-container
+    environment:
+      # Variáveis de ambiente do backend
+      DATABASE_NAME: despesas_db
+      DATABASE_USER: root
+      DATABASE_PASSWORD: root
+      DATABASE_HOST: database
+      DATABASE_PORT: 5432
+    ports:
+      - "3000:3000" # Expondo o backend no host na porta 3000
+    depends_on:
+      - database # Aguarda o banco começar
+    volumes:
+      - ./backend:/usr/src/app # Monta o código do backend no container
+
+  # Serviço do Banco de Dados
+  database:
+    image: postgres:13
+    container_name: postgres-container
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: despesas_db
+    ports:
+      - "5432:5432" # Expondo o PostgreSQL no host na porta 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
