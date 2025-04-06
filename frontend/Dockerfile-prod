@@ -1,0 +1,35 @@
+# Etapa 1: build da aplicação React
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+# Copia apenas os arquivos de dependência
+COPY package*.json ./
+
+# Instala as dependências de forma limpa e mais leve
+RUN npm ci
+
+# Copia o restante do código-fonte
+COPY . .
+
+# Gera o build da aplicação React
+RUN npm run build
+
+# Etapa 2: imagem de produção com Nginx
+FROM nginx:stable-alpine
+
+# Remove arquivos padrão do nginx
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copia o build gerado da primeira etapa
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Copia um arquivo de configuração customizado do nginx (opcional, recomendado)
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expõe a porta padrão do nginx
+EXPOSE 80
+
+# Comando padrão para manter o nginx rodando em foreground
+CMD ["nginx", "-g", "daemon off;"]
+

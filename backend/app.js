@@ -1,18 +1,25 @@
 const express = require('express');
 const cors = require('cors');
-const despesaRoutes = require('./src/routes/despesaRoutes'); // Importa o arquivo de rotas
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/docs/swaggerConfig'); // Caminho para sua config Swagger
+const despesaRoutes = require('./src/routes/despesaRoutes');
 
 const app = express();
 const PORT = 3000;
 
-// Configuração de middlewares
+// Middlewares
 app.use(cors());
-app.use(express.json()); // Permite o processamento de JSON no corpo das requisições
+app.use(express.json());
 
-// Configuração de rotas
+// Rota da documentação Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Suas rotas da API
 app.use('/api', despesaRoutes);
 
-// Inicializador do servidor
+// Inicialização do servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Documentação Swagger disponível em http://localhost:${PORT}/api-docs`);
 });
+

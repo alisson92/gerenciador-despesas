@@ -1,50 +1,60 @@
 version: '3.8'
+
 services:
-  # Serviço do Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend-container
-    stdin_open: true
+    container_name: frontend-dev
     ports:
-      - "3001:3000" # Expondo o React no host na porta 3001
+      - "3001:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
-      - backend # Aguarda o backend iniciar
+      - backend
+    networks:
+      - app-network
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # melhora hot reload em alguns ambientes
 
-  # Serviço do Backend
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: backend-container
-    environment:
-      # Variáveis de ambiente do backend
-      DATABASE_NAME: despesas_db
-      DATABASE_USER: root
-      DATABASE_PASSWORD: root
-      DATABASE_HOST: database
-      DATABASE_PORT: 5432
+    container_name: backend-dev
     ports:
-      - "3000:3000" # Expondo o backend no host na porta 3000
-    depends_on:
-      - database # Aguarda o banco começar
+      - "3000:3000"
+    env_file:
+      - .env
     volumes:
-      - ./backend:/usr/src/app # Monta o código do backend no container
+      - ./backend:/usr/src/app
+    depends_on:
+      - database
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-  # Serviço do Banco de Dados
   database:
     image: postgres:13
-    container_name: postgres-container
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: despesas_db
+    container_name: postgres
+    restart: unless-stopped
     ports:
-      - "5432:5432" # Expondo o PostgreSQL no host na porta 5432
+      - "5432:5432"
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+
