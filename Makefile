@@ -6,6 +6,12 @@ POSTGRES_PROD=postgres-prod
 ENV_DEV=.env
 ENV_PROD=.env.prod
 
+# Declaração de alvos como .PHONY
+.PHONY: all up down logs ps restart up-prod down-prod logs-prod ps-prod restart-prod backup backup-prod restore restore-prod prune help
+
+# Alvo padrão que chama a ajuda
+all: help
+
 # Comandos gerais
 up:
 	docker-compose -f $(COMPOSE_DEV) --env-file $(ENV_DEV) up -d --build
@@ -66,3 +72,4 @@ prune:
 # Ajuda
 help:
 	@./scripts/makefile-shortcuts.sh
+
