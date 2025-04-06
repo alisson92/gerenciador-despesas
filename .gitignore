@@ -1,4 +1,27 @@
-
 # Arquivos de ambiente
 .env*
+!.env.example  # se quiser deixar um exemplo versionado
+
+# Pastas de backup
+backups/
+
+# Logs
+*.log
+
+# Dependências do Node.js
+**/node_modules/
+
+# Arquivos do Docker
+**/postgres_data/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Arquivos temporários
+*.swp
+*.swo
 

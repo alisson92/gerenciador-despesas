@@ -1,7 +1,7 @@
 # Caminhos dos arquivos
 COMPOSE_DEV=docker-compose.yml
 COMPOSE_PROD=docker-compose.prod.yml
-POSTGRES_DEV=postgres-container
+POSTGRES_DEV=postgres
 POSTGRES_PROD=postgres-prod
 ENV_DEV=.env
 ENV_PROD=.env.prod
@@ -48,16 +48,16 @@ restart-prod:
 
 # Banco de dados
 backup:
-	docker exec -t $(POSTGRES_DEV) pg_dump -U $$DATABASE_USER $$DATABASE_NAME > backup.sql
+	@bash -c 'set -o allexport && source $(ENV_DEV) && bash scripts/backup.sh $(POSTGRES_DEV) $$DATABASE_USER $$DATABASE_NAME'
 
 backup-prod:
-	docker exec -t $(POSTGRES_PROD) pg_dump -U $$DATABASE_USER $$DATABASE_NAME > backup-prod.sql
+	@bash -c 'set -o allexport && source $(ENV_PROD) && bash scripts/backup.sh $(POSTGRES_PROD) $$DATABASE_USER $$DATABASE_NAME'
 
 restore:
-	cat backup.sql | docker exec -i $(POSTGRES_DEV) psql -U $$DATABASE_USER $$DATABASE_NAME
+	@bash -c 'set -o allexport && source $(ENV_DEV) && cat backup.sql | docker exec -i $(POSTGRES_DEV) psql -U $$DATABASE_USER $$DATABASE_NAME'
 
 restore-prod:
-	cat backup-prod.sql | docker exec -i $(POSTGRES_PROD) psql -U $$DATABASE_USER $$DATABASE_NAME
+	@bash -c 'set -o allexport && source $(ENV_PROD) && cat backup.sql | docker exec -i $(POSTGRES_PROD) psql -U $$DATABASE_USER $$DATABASE_NAME'
 
 # Limpeza
 prune:
