@@ -2,7 +2,6 @@
 
 ## 📌 Descrição
 
->>>>>>> dd9d594 (Update README.md)
 O **Gerenciador de Despesas** é uma aplicação full-stack desenvolvida com o objetivo de ajudar usuários a controlar suas finanças pessoais de maneira simples e visual. Utiliza **React.js** no frontend, **Node.js/Express** no backend e **PostgreSQL** como banco de dados, com **Docker Compose** para orquestração.
 
 ---
@@ -35,10 +34,7 @@ O **Gerenciador de Despesas** é uma aplicação full-stack desenvolvida com o o
   - `frontend`
   - `backend`
   - `database`
-<<<<<<< HEAD
 - Arquivo alternativo para produção: `docker-compose.prod.yml`
-=======
->>>>>>> dd9d594 (Update README.md)
 
 ---
 
@@ -52,18 +48,12 @@ gerenciador-despesas/
 ├── frontend/             # Frontend (React.js)
 │   ├── Dockerfile
 │   └── ...
-<<<<<<< HEAD
 ├── scripts/              # Scripts auxiliares (backup, restauração etc.)
 ├── postgres_data/        # Volume persistente para banco de dados
 ├── docker-compose.yml    # Orquestração dos containers
 ├── docker-compose.prod.yml # Arquivo de orquestração para produção
 ├── .env.example          # Exemplo de variáveis de ambiente
 ├── Makefile              # Script facilitador para comandos comuns
-=======
-├── postgres_data/        # Volume persistente para banco de dados
-├── docker-compose.yml    # Orquestração dos containers
-├── .env.example          # Exemplo de variáveis de ambiente
->>>>>>> dd9d594 (Update README.md)
 └── README.md             # Documentação
 ```
 
@@ -127,7 +117,6 @@ docker compose up -d --build
 
 ---
 
-<<<<<<< HEAD
 ## 📂 Scripts Auxiliares
 
 O diretório `scripts/` contém utilitários úteis, como:
@@ -149,8 +138,6 @@ make logs       # Visualiza os logs do Docker
 
 ---
 
-=======
->>>>>>> dd9d594 (Update README.md)
 ## 📌 Observações
 
 - Os dados persistem mesmo após reinicialização graças ao volume `postgres_data`.
@@ -160,8 +147,5 @@ make logs       # Visualiza os logs do Docker
 
 ## 🧑‍💻 Autor
 
-<<<<<<< HEAD
 Desenvolvido por [@alisson92](https://github.com/alisson92) 🚀
-=======
-Desenvolvido por [@alisson92](https://github.com/alisson92) 🚀  
->>>>>>> dd9d594 (Update README.md)
+
