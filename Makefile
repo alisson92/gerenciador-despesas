@@ -1,4 +1,7 @@
-# Caminhos dos arquivos
+# 📦 Makefile - Gerenciador de Despesas
+# Automatiza tarefas de desenvolvimento, produção e banco de dados usando Docker Compose
+
+# Arquivos de configuração
 COMPOSE_DEV=docker-compose.yml
 COMPOSE_PROD=docker-compose.prod.yml
 POSTGRES_DEV=postgres
@@ -6,13 +9,16 @@ POSTGRES_PROD=postgres-prod
 ENV_DEV=.env
 ENV_PROD=.env.prod
 
-# Declaração de alvos como .PHONY
+# Targets declarados como auxiliares
 .PHONY: all up down logs ps restart up-prod down-prod logs-prod ps-prod restart-prod backup backup-prod restore restore-prod prune help
 
-# Alvo padrão que chama a ajuda
+# 🔰 Alvo padrão
 all: help
 
-# Comandos gerais
+# ============================
+# 🔧 Desenvolvimento (DEV)
+# ============================
+
 up:
 	docker-compose -f $(COMPOSE_DEV) --env-file $(ENV_DEV) up -d --build
 
@@ -32,7 +38,10 @@ restart:
 	docker-compose -f $(COMPOSE_DEV) --env-file $(ENV_DEV) up -d --build
 	@echo "✅ Ambiente de desenvolvimento reiniciado!"
 
-# Produção
+# ============================
+# 🚀 Produção (PROD)
+# ============================
+
 up-prod:
 	docker-compose -f $(COMPOSE_PROD) --env-file $(ENV_PROD) up -d --build
 
@@ -52,24 +61,32 @@ restart-prod:
 	docker-compose -f $(COMPOSE_PROD) --env-file $(ENV_PROD) up -d --build
 	@echo "✅ Ambiente de produção reiniciado!"
 
-# Banco de dados
+# ============================
+# 🐘 Banco de Dados
+# ============================
+
 backup:
-	@bash -c 'set -o allexport && source $(ENV_DEV) && bash scripts/backup.sh $(POSTGRES_DEV) $$DATABASE_USER $$DATABASE_NAME'
+	@bash -c 'set -o allexport && source $(ENV_DEV) && bash scripts/backup.sh $(POSTGRES_DEV) "$$DATABASE_USER" "$$DATABASE_NAME"'
 
 backup-prod:
-	@bash -c 'set -o allexport && source $(ENV_PROD) && bash scripts/backup.sh $(POSTGRES_PROD) $$DATABASE_USER $$DATABASE_NAME'
+	@bash -c 'set -o allexport && source $(ENV_PROD) && bash scripts/backup.sh $(POSTGRES_PROD) "$$DATABASE_USER" "$$DATABASE_NAME"'
 
 restore:
-	@bash -c 'set -o allexport && source $(ENV_DEV) && cat backup.sql | docker exec -i $(POSTGRES_DEV) psql -U $$DATABASE_USER $$DATABASE_NAME'
+	@bash -c 'set -o allexport && source $(ENV_DEV) && cat backup.sql | docker exec -i $(POSTGRES_DEV) psql -U "$$DATABASE_USER" "$$DATABASE_NAME"'
 
 restore-prod:
-	@bash -c 'set -o allexport && source $(ENV_PROD) && cat backup.sql | docker exec -i $(POSTGRES_PROD) psql -U $$DATABASE_USER $$DATABASE_NAME'
+	@bash -c 'set -o allexport && source $(ENV_PROD) && cat backup.sql | docker exec -i $(POSTGRES_PROD) psql -U "$$DATABASE_USER" "$$DATABASE_NAME"'
 
-# Limpeza
+# ============================
+# 🧹 Utilitários
+# ============================
+
 prune:
 	docker system prune -f
 
-# Ajuda
+# ============================
+# 📘 Ajuda
+# ============================
+
 help:
 	@./scripts/makefile-shortcuts.sh
-
