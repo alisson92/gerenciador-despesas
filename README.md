@@ -1,4 +1,3 @@
-
 # Gerenciador de Despesas
 
 ## 📌 Descrição
@@ -35,6 +34,7 @@ O **Gerenciador de Despesas** é uma aplicação full-stack desenvolvida com o o
   - `frontend`
   - `backend`
   - `database`
+- Arquivo alternativo para produção: `docker-compose.prod.yml`
 
 ---
 
@@ -48,9 +48,12 @@ gerenciador-despesas/
 ├── frontend/             # Frontend (React.js)
 │   ├── Dockerfile
 │   └── ...
+├── scripts/              # Scripts auxiliares (backup, restauração etc.)
 ├── postgres_data/        # Volume persistente para banco de dados
 ├── docker-compose.yml    # Orquestração dos containers
+├── docker-compose.prod.yml # Arquivo de orquestração para produção
 ├── .env.example          # Exemplo de variáveis de ambiente
+├── Makefile              # Script facilitador para comandos comuns
 └── README.md             # Documentação
 ```
 
@@ -114,6 +117,27 @@ docker compose up -d --build
 
 ---
 
+## 📂 Scripts Auxiliares
+
+O diretório `scripts/` contém utilitários úteis, como:
+
+- `backup.sql`: exportação inicial do banco de dados.
+- Outros scripts podem ser utilizados em processos de CI/CD ou automações.
+
+---
+
+## 🛠️ Makefile (Comandos Rápidos)
+
+O projeto conta com um `Makefile` com atalhos úteis. Exemplo:
+
+```bash
+make build      # Compila e sobe os containers
+make down       # Para e remove os containers
+make logs       # Visualiza os logs do Docker
+```
+
+---
+
 ## 📌 Observações
 
 - Os dados persistem mesmo após reinicialização graças ao volume `postgres_data`.
@@ -123,4 +147,4 @@ docker compose up -d --build
 
 ## 🧑‍💻 Autor
 
-Desenvolvido por [@alisson92](https://github.com/alisson92) 🚀  
+Desenvolvido por [@alisson92](https://github.com/alisson92) 🚀
