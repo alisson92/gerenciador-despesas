@@ -1,122 +1,62 @@
-# 📦 Documentação do Makefile
+# 📄 Documentação do Makefile
 
-Este arquivo documenta todos os atalhos disponíveis no `Makefile` do projeto **Gerenciador de Despesas**. Os comandos são utilizados para facilitar a execução de tarefas comuns de desenvolvimento, produção, manutenção e backup.
+Este arquivo descreve os comandos disponíveis no `Makefile` localizado na raiz do projeto **Gerenciador de Despesas**.
 
----
-
-## 🧰 Pré-Requisitos
-
-Antes de utilizar o `Makefile`, certifique-se de que os seguintes itens estão instalados:
-
-- `make`
-- `docker`
-- `docker-compose`
+O uso do `Makefile` visa simplificar e padronizar ações rotineiras do desenvolvimento e manutenção do ambiente Docker.
 
 ---
 
-## 🚀 Comandos Disponíveis
+## ▶️ Execução dos Comandos
 
-### 🎯 Ambiente de Desenvolvimento
-
-```bash
-make up
-```
-> Sobe os containers definidos no `docker-compose.yml`.
+Todos os comandos abaixo devem ser executados via terminal, a partir da raiz do projeto:
 
 ```bash
-make down
-```
-> Encerra os containers do ambiente de desenvolvimento.
-
-```bash
-make logs
-```
-> Exibe os logs do ambiente em tempo real.
-
-```bash
-make ps
-```
-> Mostra o status dos containers (ativos, pausados, etc).
-
----
-
-### 🧪 Ambiente de Produção
-
-```bash
-make up-prod
-```
-> Sobe os containers definidos no `docker-compose.prod.yml`.
-
----
-
-### 💾 Backup e Restauração (Ambiente de Desenvolvimento)
-
-```bash
-make backup
-```
-> Realiza um backup do banco de dados PostgreSQL (dev).
-
-```bash
-make restore
-```
-> Restaura o backup salvo anteriormente (dev).
-
----
-
-### 💾 Backup e Restauração (Ambiente de Produção)
-
-```bash
-make backup-prod
-```
-> Realiza backup do banco em ambiente de produção.
-
-```bash
-make restore-prod
-```
-> Restaura backup no ambiente de produção.
-
----
-
-### 🧹 Limpeza de Recursos
-
-```bash
-make prune
-```
-> Remove containers, redes e volumes não utilizados.
-
----
-
-### 📋 Ajuda
-
-```bash
-make help
-```
-> Exibe todos os comandos disponíveis com descrição formatada.
-
----
-
-## 📂 Estrutura do Projeto com Makefile
-
-```plaintext
-gerenciador-despesas/
-├── Makefile                # Este arquivo define todos os comandos
-├── docker-compose.yml      # Orquestração Dev
-├── docker-compose.prod.yml # Orquestração Prod
-├── scripts/                # Scripts de backup/restauração
-│   ├── backup.sh
-│   └── restore.sh
+make <alvo>
 ```
 
 ---
 
-## ✨ Dica
+## 🛠️ Comandos Disponíveis
 
-Você pode digitar apenas `make` para ver todos os comandos disponíveis. Isso é possível graças ao comando `make help`.
+### 🔧 Build e Inicialização
+
+| Comando        | Descrição                                                                 |
+|----------------|---------------------------------------------------------------------------|
+| `make build`   | Executa `docker compose up -d --build` para construir e iniciar os containers. |
+| `make up`      | Sobe os containers sem rebuild.                                            |
+
+### 🛑 Encerramento e Limpeza
+
+| Comando        | Descrição                                                                 |
+|----------------|---------------------------------------------------------------------------|
+| `make stop`    | Para os containers.                                                       |
+| `make down`    | Remove containers, redes e volumes anônimos.                             |
+| `make clean`   | Faz `docker system prune -a` para limpar imagens e volumes não utilizados (⚠️ irreversível). |
+
+### 🔍 Logs e Status
+
+| Comando        | Descrição                                                                 |
+|----------------|---------------------------------------------------------------------------|
+| `make logs`    | Mostra os logs de todos os serviços.                                      |
+| `make ps`      | Lista o status dos containers em execução.                                |
+
+### 🐘 Banco de Dados
+
+| Comando              | Descrição                                                           |
+|----------------------|----------------------------------------------------------------------|
+| `make db-backup`     | Gera um backup do banco de dados atual para `./scripts/backup.sql`. |
+| `make db-restore`    | Restaura o banco a partir do backup `./scripts/backup.sql`.         |
 
 ---
 
-## 🔐 Notas de Segurança
+## 💡 Observações
 
-- Certifique-se de não expor backups com dados sensíveis em ambientes públicos.
-- Utilize variáveis de ambiente seguras no `docker-compose.prod.yml` ao usar em produção.
+- Todos os comandos assumem que o ambiente está corretamente configurado e o `.env` foi criado.
+- É necessário que o Docker e Docker Compose estejam instalados e operacionais.
+- Comandos como `clean` são destrutivos — use com cautela.
 
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por [@alisson92](https://github.com/alisson92) 🚀
