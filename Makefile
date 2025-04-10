@@ -8,9 +8,10 @@ POSTGRES_DEV=postgres
 POSTGRES_PROD=postgres-prod
 ENV_DEV=.env
 ENV_PROD=.env.prod
+BACKUP_FILE=backup.sql
 
 # Targets declarados como auxiliares
-.PHONY: all up down logs ps restart up-prod down-prod logs-prod ps-prod restart-prod backup backup-prod restore restore-prod prune help
+.PHONY: all up down logs ps restart up-prod down-prod logs-prod ps-prod restart-prod backup backup-prod restore restore-prod prune help check-deps
 
 # 🔰 Alvo padrão
 all: help
@@ -72,10 +73,10 @@ backup-prod:
 	@bash -c 'set -o allexport && source $(ENV_PROD) && bash scripts/backup.sh $(POSTGRES_PROD) "$$DATABASE_USER" "$$DATABASE_NAME"'
 
 restore:
-	@bash -c 'set -o allexport && source $(ENV_DEV) && cat backup.sql | docker exec -i $(POSTGRES_DEV) psql -U "$$DATABASE_USER" "$$DATABASE_NAME"'
+	@bash -c 'set -o allexport && source $(ENV_DEV) && cat $(BACKUP_FILE) | docker exec -i $(POSTGRES_DEV) psql -U "$$DATABASE_USER" "$$DATABASE_NAME"'
 
 restore-prod:
-	@bash -c 'set -o allexport && source $(ENV_PROD) && cat backup.sql | docker exec -i $(POSTGRES_PROD) psql -U "$$DATABASE_USER" "$$DATABASE_NAME"'
+	@bash -c 'set -o allexport && source $(ENV_PROD) && cat $(BACKUP_FILE) | docker exec -i $(POSTGRES_PROD) psql -U "$$DATABASE_USER" "$$DATABASE_NAME"'
 
 # ============================
 # 🧹 Utilitários
@@ -83,6 +84,11 @@ restore-prod:
 
 prune:
 	docker system prune -f
+
+check-deps:
+	@command -v docker >/dev/null 2>&1 || { echo "❌ Docker não está instalado."; exit 1; }
+	@command -v docker-compose >/dev/null 2>&1 || { echo "❌ Docker Compose não está instalado."; exit 1; }
+	@echo "✅ Todas as dependências estão instaladas."
 
 # ============================
 # 📘 Ajuda
