@@ -6,7 +6,7 @@ COPY package*.json ./
 RUN npm install
 
 # Adiciona netcat e permissões pro entrypoint
-RUN apt-get update && apt-get install -y netcat && \
+RUN apt-get update && apt-get install -y netcat-openbsd && \
     chmod +x ./entrypoint.sh
 
 COPY . .
