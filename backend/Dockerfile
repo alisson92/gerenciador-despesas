@@ -5,14 +5,15 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
-# Adiciona netcat e permissões pro entrypoint
+# Copia apenas o entrypoint antes de dar permissão
+COPY entrypoint.sh ./entrypoint.sh
 RUN apt-get update && apt-get install -y netcat-openbsd && \
     chmod +x ./entrypoint.sh
 
+# Agora copia o restante do projeto
 COPY . .
 
 EXPOSE 3000
 
-# Usa script como entrypoint
 CMD ["./entrypoint.sh"]
 
