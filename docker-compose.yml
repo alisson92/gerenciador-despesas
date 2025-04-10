@@ -16,7 +16,7 @@ services:
     networks:
       - app-network
     environment:
-      - CHOKIDAR_USEPOLLING=true  # melhora hot reload em alguns ambientes
+      - CHOKIDAR_USEPOLLING=true
 
   backend:
     build:
@@ -44,7 +44,7 @@ services:
     container_name: postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5432:5432"  # Porta padrão liberada no host
     env_file:
       - .env
     volumes:
