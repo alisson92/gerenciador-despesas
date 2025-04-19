@@ -1,30 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 
-const ExpenseList = () => {
-  const [expenses, setExpenses] = useState([]);
+// Exemplo de função auxiliar para deletar despesa na API
+async function apiDeleteDespesa(token, id) {
+  const res = await fetch(`http://localhost:3000/api/despesas/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  // 204 = sucesso, resposta vazia
+  if (res.status === 204) return true;
+  const data = await res.json().catch(() => ({}));
+  throw new Error(data.message || data.error || 'Erro ao excluir despesa');
+}
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
-
-  const fetchExpenses = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/despesas`);
-      setExpenses(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar despesas:', error);
-    }
-  };
+const ExpenseList = ({ despesas, loading, refresh }) => {
+  const token = localStorage.getItem('token');
 
   const deleteExpense = async (id) => {
+    if (!window.confirm('Tem certeza que deseja excluir esta despesa?')) return;
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/despesas/${id}`);
-      fetchExpenses(); // Recarrega a lista após excluir
+      await apiDeleteDespesa(token, id);
+      refresh && refresh();
     } catch (error) {
-      console.error('Erro ao excluir despesa:', error);
+      alert(error.message || 'Erro ao excluir despesa.');
     }
   };
+
+  if (loading) return <p>Carregando despesas...</p>;
+  if (!despesas || despesas.length === 0) {
+    return <p>Nenhuma despesa cadastrada.</p>;
+  }
 
   return (
     <table className="table mt-4">
@@ -34,16 +40,18 @@ const ExpenseList = () => {
           <th>Descrição</th>
           <th>Valor</th>
           <th>Data</th>
+          <th>Categoria</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody>
-        {expenses.map((expense) => (
+        {despesas.map((expense) => (
           <tr key={expense.id}>
             <td>{expense.id}</td>
             <td>{expense.descricao}</td>
             <td>{expense.valor}</td>
             <td>{new Date(expense.data).toLocaleDateString()}</td>
+            <td>{expense.categoria}</td>
             <td>
               <button
                 onClick={() => deleteExpense(expense.id)}
@@ -51,6 +59,7 @@ const ExpenseList = () => {
               >
                 Excluir
               </button>
+              {/* Aqui pode adicionar botão de editar se implementar futuramente */}
             </td>
           </tr>
         ))}
