@@ -1,8 +1,11 @@
-const Despesa = require('../models/Despesa');
+const { Despesa } = require('../models'); // Importa corretamente do index.js, que faz as associações
 
+// Listar todas as despesas do usuário autenticado
 exports.getDespesas = async (req, res) => {
   try {
-    const despesas = await Despesa.findAll();
+    const despesas = await Despesa.findAll({
+      where: { userId: req.user.id }
+    });
     res.json(despesas);
   } catch (error) {
     console.error(error);
@@ -10,9 +13,12 @@ exports.getDespesas = async (req, res) => {
   }
 };
 
+// Buscar uma despesa específica do usuário autenticado
 exports.getDespesaById = async (req, res) => {
   try {
-    const despesa = await Despesa.findByPk(req.params.id);
+    const despesa = await Despesa.findOne({
+      where: { id: req.params.id, userId: req.user.id }
+    });
     if (despesa) {
       res.json(despesa);
     } else {
@@ -24,21 +30,31 @@ exports.getDespesaById = async (req, res) => {
   }
 };
 
+// Criar despesa vinculada ao usuário autenticado
 exports.createDespesa = async (req, res) => {
   try {
     const { descricao, valor, data, categoria } = req.body;
-    const novaDespesa = await Despesa.create({ descricao, valor, data, categoria });
+    const novaDespesa = await Despesa.create({
+      descricao,
+      valor,
+      data,
+      categoria,
+      userId: req.user.id // Associa ao usuário logado
+    });
     res.status(201).json(novaDespesa);
   } catch (error) {
-    console.error('Erro ao criar despesas:', error);
+    console.error('Erro ao criar despesa:', error);
     res.status(500).send('Erro ao criar despesa');
   }
 };
 
+// Atualizar uma despesa só se pertencer ao usuário logado
 exports.updateDespesa = async (req, res) => {
   try {
     const { descricao, valor, data, categoria } = req.body;
-    const despesa = await Despesa.findByPk(req.params.id);
+    const despesa = await Despesa.findOne({
+      where: { id: req.params.id, userId: req.user.id }
+    });
 
     if (despesa) {
       despesa.descricao = descricao;
@@ -56,9 +72,12 @@ exports.updateDespesa = async (req, res) => {
   }
 };
 
+// Excluir uma despesa só se pertencer ao usuário logado
 exports.deleteDespesa = async (req, res) => {
   try {
-    const despesa = await Despesa.findByPk(req.params.id);
+    const despesa = await Despesa.findOne({
+      where: { id: req.params.id, userId: req.user.id }
+    });
 
     if (despesa) {
       await despesa.destroy();

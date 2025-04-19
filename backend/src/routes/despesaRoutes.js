@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const despesaController = require('../controllers/despesaController');
+const authMiddleware = require('../middlewares/authMiddleware'); // <<< Importa o middleware
 
 /**
  * @swagger
@@ -8,6 +9,9 @@ const despesaController = require('../controllers/despesaController');
  *   name: Despesas
  *   description: Gerenciamento de despesas
  */
+
+// Todas as rotas abaixo exigem autenticação JWT
+router.use(authMiddleware);
 
 /**
  * @swagger
@@ -119,4 +123,3 @@ router.put('/despesas/:id', despesaController.updateDespesa);
 router.delete('/despesas/:id', despesaController.deleteDespesa);
 
 module.exports = router;
-
