@@ -1,26 +1,39 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiCreateDespesa } from '../api';
 
 const ExpenseForm = ({ onAdd }) => {
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [data, setData] = useState('');
-  const [categoria, setCategoria] = useState('Alimentação'); // Nova categoria com valor padrão
+  const [categoria, setCategoria] = useState('Alimentação');
+  const [erro, setErro] = useState('');
+
+  const token = localStorage.getItem('token');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErro('');
+
+    if (!token) {
+      setErro('Você precisa estar logado para adicionar despesas.');
+      return;
+    }
 
     const newExpense = { descricao, valor: parseFloat(valor), data, categoria };
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/despesas`, newExpense);
-      onAdd(); // Notifica o componente pai para atualizar a lista
-      setDescricao('');
-      setValor('');
-      setData('');
-      setCategoria('Alimentação'); // Reseta a categoria para o valor padrão
+      const resultado = await apiCreateDespesa(token, newExpense);
+      if (resultado && resultado.id) {
+        onAdd && onAdd(); // Atualiza lista
+        setDescricao('');
+        setValor('');
+        setData('');
+        setCategoria('Alimentação');
+      } else {
+        setErro(resultado.message || resultado.error || 'Erro ao adicionar despesa.');
+      }
     } catch (error) {
-      console.error('Erro ao adicionar despesa:', error);
+      setErro('Erro ao adicionar despesa. Tente novamente.');
     }
   };
 
@@ -74,6 +87,11 @@ const ExpenseForm = ({ onAdd }) => {
       <button type="submit" className="btn btn-primary">
         Adicionar Despesa
       </button>
+      {erro && (
+        <div className="alert alert-danger mt-2" role="alert">
+          {erro}
+        </div>
+      )}
     </form>
   );
 };

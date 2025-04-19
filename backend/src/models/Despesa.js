@@ -1,27 +1,35 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+module.exports = (sequelize, DataTypes) => {
+  const Despesa = sequelize.define('Despesa', {
+    descricao: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    valor: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    data: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    categoria: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'Outros',
+    },
+    userId: { // <<== Adicionado para associar à tabela de usuários
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
+  }, {
+    tableName: 'despesas',
+    timestamps: true,
+  });
 
-const Despesa = sequelize.define('Despesa', {
-  descricao: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  valor: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  data: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  categoria: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: 'Outros', // Valor padrão
-  },
-}, {
-  tableName: 'despesas', // Especifica explicitamente o nome correto da tabela
-  timestamps: true, // Mantém createdAt e updatedAt
-});
+  // Associação: cada despesa pertence a um usuário
+  Despesa.associate = function(models) {
+    Despesa.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+  };
 
-module.exports = Despesa;
+  return Despesa;
+};

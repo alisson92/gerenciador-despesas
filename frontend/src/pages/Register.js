@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Card, CardContent, Alert } from '@mui/material';
-import { apiLogin } from '../api';
+import { apiRegister } from '../api';
 
-const Login = () => {
+const Register = () => {
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [sucesso, setSucesso] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    setErro('');
+    setFeedback('');
+    setSucesso(false);
+    const result = await apiRegister({ nome, email, senha });
 
-    const result = await apiLogin({ email, senha });
-
-    if (result.token) {
-      localStorage.setItem('token', result.token);
-      // Você pode salvar também o usuário, se quiser
-      // localStorage.setItem('user', JSON.stringify(result.user));
-      navigate('/dashboard'); // Redirecionar para a dashboard
+    if (result.message && result.message.startsWith("Usuário")) {
+      setFeedback(result.message);
+      setSucesso(true);
+      setTimeout(() => navigate("/login"), 1500); // Redireciona após sucesso
     } else {
-      setErro(result.message || 'Falha no login.');
+      setFeedback(result.message || result.error || "Erro ao cadastrar.");
     }
   };
 
@@ -36,9 +37,18 @@ const Login = () => {
       <Card sx={{ width: 400 }}>
         <CardContent>
           <Typography variant="h5" textAlign="center" gutterBottom>
-            Login
+            Cadastro
           </Typography>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleRegister}>
+            <TextField
+              label="Nome"
+              type="text"
+              fullWidth
+              margin="normal"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              required
+            />
             <TextField
               label="E-mail"
               type="email"
@@ -64,12 +74,16 @@ const Login = () => {
               fullWidth
               sx={{ mt: 2 }}
             >
-              Entrar
+              Cadastrar
             </Button>
-            {erro && <Alert severity="error" sx={{ mt: 2 }}>{erro}</Alert>}
+            {feedback && (
+              <Alert severity={sucesso ? "success" : "error"} sx={{ mt: 2 }}>
+                {feedback}
+              </Alert>
+            )}
             <Box mt={2} textAlign="center">
               <Typography variant="body2">
-                Não tem conta? <a href="/register">Cadastre-se</a>
+                Já tem conta? <a href="/login">Entrar</a>
               </Typography>
             </Box>
           </form>
@@ -79,4 +93,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
