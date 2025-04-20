@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Box, Typography, TextField, Button, Card, CardContent, Alert, Link as MuiLink } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [resetUrl, setResetUrl] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,6 +70,18 @@ export default function ForgotPassword() {
             }>
               {message}
             </Alert>
+          )}
+          {/* Botão para voltar ao login se o e-mail não for encontrado */}
+          {message && message.toLowerCase().includes('não encontrado') && (
+            <Button
+              variant="text"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+              onClick={() => navigate('/login')}
+            >
+              Voltar para login
+            </Button>
           )}
           {resetUrl && (
             <Box mt={2}>
