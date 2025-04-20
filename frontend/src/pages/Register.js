@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Card, CardContent, Alert } from '@mui/material';
 import { apiRegister } from '../api';
 
@@ -76,6 +76,16 @@ const Register = () => {
             >
               Cadastrar
             </Button>
+            {/* Botão para voltar ao login */}
+            <Button
+              variant="text"
+              color="primary"
+              fullWidth
+              sx={{ mt: 1 }}
+              onClick={() => navigate('/login')}
+            >
+              Voltar para login
+            </Button>
             {feedback && (
               <Alert severity={sucesso ? "success" : "error"} sx={{ mt: 2 }}>
                 {feedback}
@@ -83,7 +93,7 @@ const Register = () => {
             )}
             <Box mt={2} textAlign="center">
               <Typography variant="body2">
-                Já tem conta? <a href="/login">Entrar</a>
+                Já tem conta? <Link to="/login">Entrar</Link>
               </Typography>
             </Box>
           </form>
