@@ -13,16 +13,24 @@ module.exports = (sequelize, DataTypes) => {
     senha: {
       type: DataTypes.STRING,
       allowNull: false,
-    }
+    },
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   }, {
-    tableName: 'users', // <<< Adicione esta linha!
+    tableName: 'users',
     timestamps: true,
   });
 
-  // Caso precise declarar associações futuras:
   User.associate = function(models) {
     // Exemplo: User.hasMany(models.Despesa);
   };
 
   return User;
 };
+

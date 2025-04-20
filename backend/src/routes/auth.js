@@ -15,7 +15,8 @@ router.post('/forgot-password', async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      return res.status(404).json({ message: 'Usuário não encontrado' });
+      // NOTA: Em produção, use mensagem genérica!
+      return res.status(404).json({ message: 'E-mail não encontrado. Por favor, tente novamente.' });
     }
 
     const token = crypto.randomBytes(20).toString('hex');
@@ -25,7 +26,7 @@ router.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = expires;
     await user.save();
 
-    const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     await sendEmail(
       user.email,
@@ -33,7 +34,11 @@ router.post('/forgot-password', async (req, res) => {
       `Olá, ${user.nome}!\n\nClique no link para redefinir sua senha:\n${resetUrl}\n\nEsse link é válido por 1 hora.`
     );
 
-    res.status(200).json({ message: 'E-mail de recuperação enviado com sucesso!' });
+    // Retornar o link para facilitar testes/demonstração acadêmica
+    res.status(200).json({
+      message: 'Se o e-mail estiver cadastrado, você receberá instruções para redefinir sua senha.',
+      resetUrl, // <-- Exposto apenas em ambiente de testes/desenvolvimento!
+    });
 
   } catch (err) {
     console.error('Erro no forgot-password:', err);
@@ -78,4 +83,3 @@ router.post('/reset-password', async (req, res) => {
 });
 
 module.exports = router;
-

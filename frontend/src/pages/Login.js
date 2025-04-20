@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Card, CardContent, Alert } from '@mui/material';
 import { apiLogin } from '../api';
 
@@ -57,6 +57,11 @@ const Login = () => {
               onChange={(e) => setSenha(e.target.value)}
               required
             />
+            <Box mt={1} textAlign="right">
+              <Link to="/forgot-password" style={{ textDecoration: 'none', color: '#1976d2' }}>
+                Esqueci minha senha?
+              </Link>
+            </Box>
             <Button
               type="submit"
               variant="contained"
@@ -69,7 +74,7 @@ const Login = () => {
             {erro && <Alert severity="error" sx={{ mt: 2 }}>{erro}</Alert>}
             <Box mt={2} textAlign="center">
               <Typography variant="body2">
-                Não tem conta? <a href="/register">Cadastre-se</a>
+                Não tem conta? <Link to="/register">Cadastre-se</Link>
               </Typography>
             </Box>
           </form>
