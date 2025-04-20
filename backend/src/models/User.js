@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    orcamento: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      defaultValue: 0,
+    },
   }, {
     tableName: 'users',
     timestamps: true,
@@ -33,4 +38,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
-
