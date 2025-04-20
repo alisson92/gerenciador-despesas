@@ -1,3 +1,4 @@
+
 # Gerenciador de Despesas
 
 ## 📌 Descrição
@@ -172,3 +173,4 @@ Desenvolvido por [@alisson92](https://github.com/alisson92)
 Licença: MIT
 
 ---
+
