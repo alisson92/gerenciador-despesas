@@ -1,23 +1,23 @@
 {
   "development": {
-    "username": "root",
-    "password": "root",
+    "username": "usuario_exemplo",
+    "password": "senha_exemplo",
     "database": "despesas_db",
     "host": "database",
     "dialect": "postgres",
     "port": 5432
   },
   "test": {
-    "username": "root",
-    "password": "root",
+    "username": "usuario_exemplo",
+    "password": "senha_exemplo",
     "database": "test_despesas_db",
     "host": "database",
     "dialect": "postgres",
     "port": 5432
   },
   "production": {
-    "username": "root",
-    "password": "root",
+    "username": "usuario_exemplo",
+    "password": "senha_exemplo",
     "database": "prod_despesas_db",
     "host": "database",
     "dialect": "postgres",
