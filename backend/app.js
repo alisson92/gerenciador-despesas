@@ -9,6 +9,7 @@ const swaggerSpec = require('./src/docs/swaggerConfig');
 const despesaRoutes = require('./src/routes/despesaRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const authRoutes = require('./src/routes/auth'); // Importando as rotas de autenticação
+const reportRoutes = require('./src/routes/reportRoutes'); // Importando as rotas de relatório
 
 const app = express();
 const PORT = 3000;
@@ -28,6 +29,9 @@ app.use('/api/users', userRoutes);
 
 // Rotas de despesas - PREFIXO /api
 app.use('/api', despesaRoutes);
+
+// Rotas de relatórios - PREFIXO /api
+app.use('/api', reportRoutes);
 
 // Inicialização do servidor
 app.listen(PORT, () => {

@@ -22,7 +22,6 @@ const Dashboard = () => {
   const [orcamentoInput, setOrcamentoInput] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
-  const [balance, setBalance] = useState(0);
   const [showEditModal, setShowEditModal] = useState(false);
   const [expenseToEdit, setExpenseToEdit] = useState(null);
 
@@ -59,11 +58,6 @@ const Dashboard = () => {
         });
     }
   }, [token, reload]);
-
-  useEffect(() => {
-    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.valor, 0);
-    setBalance(orcamento - totalExpenses);
-  }, [expenses, orcamento]);
 
   const handleReload = () => setReload((r) => !r);
 
@@ -133,7 +127,7 @@ const Dashboard = () => {
       });
   };
 
-  // Cálculos para alerta/progresso
+  // Cálculo para alerta/progresso
   const totalDespesas = expenses.reduce((sum, expense) => sum + expense.valor, 0);
 
   return (
@@ -159,8 +153,8 @@ const Dashboard = () => {
           boxShadow: orcamento > 0 && totalDespesas >= orcamento
             ? '0 0 16px 2px #d32f2f'
             : orcamento > 0 && totalDespesas >= orcamento * 0.8
-            ? '0 0 12px 2px #ff9800'
-            : '0 0 6px 1px #388e3c'
+              ? '0 0 12px 2px #ff9800'
+              : '0 0 6px 1px #388e3c'
         }}
       >
         <CardHeader
@@ -214,14 +208,14 @@ const Dashboard = () => {
                 color={
                   totalDespesas < orcamento * 0.8 ? "#388e3c"
                     : totalDespesas < orcamento ? "#ff9800"
-                    : "#d32f2f"
+                      : "#d32f2f"
                 }
                 fontWeight="bold"
               >
                 {
                   totalDespesas < orcamento * 0.8 ? 'Confortável'
                     : totalDespesas < orcamento ? 'No Limite'
-                    : 'Estourado!'
+                      : 'Estourado!'
                 }
               </Typography>
             </Box>
