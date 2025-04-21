@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { apiCreateDespesa } from '../api';
 
+// Lista de categorias padronizadas
+const CATEGORIAS = [
+  { slug: 'alimentacao', label: 'Alimentação' },
+  { slug: 'transporte', label: 'Transporte' },
+  { slug: 'lazer', label: 'Lazer' },
+  { slug: 'saude', label: 'Saúde' },
+  { slug: 'outros', label: 'Outros' }
+];
+
 const ExpenseForm = ({ onAdd }) => {
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [data, setData] = useState('');
-  const [categoria, setCategoria] = useState('Alimentação');
+  const [categoria, setCategoria] = useState('alimentacao'); // valor padrão já normalizado
   const [erro, setErro] = useState('');
 
   const token = localStorage.getItem('token');
@@ -24,11 +33,11 @@ const ExpenseForm = ({ onAdd }) => {
     try {
       const resultado = await apiCreateDespesa(token, newExpense);
       if (resultado && resultado.id) {
-        onAdd && onAdd(); // Atualiza lista
+        onAdd && onAdd();
         setDescricao('');
         setValor('');
         setData('');
-        setCategoria('Alimentação');
+        setCategoria('alimentacao'); // volta ao valor padrão
       } else {
         setErro(resultado.message || resultado.error || 'Erro ao adicionar despesa.');
       }
@@ -77,11 +86,9 @@ const ExpenseForm = ({ onAdd }) => {
           onChange={(e) => setCategoria(e.target.value)}
           required
         >
-          <option value="Alimentação">Alimentação</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Lazer">Lazer</option>
-          <option value="Saúde">Saúde</option>
-          <option value="Outros">Outros</option>
+          {CATEGORIAS.map(cat => (
+            <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+          ))}
         </select>
       </div>
       <button type="submit" className="btn btn-primary">

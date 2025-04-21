@@ -5,7 +5,13 @@
     "database": "despesas_db",
     "host": "database",
     "dialect": "postgres",
-    "port": 5432
+    "port": 5432,
+    "timezone": "-03:00",
+    "dialectOptions": {
+      "useUTC": false,
+      "dateStrings": true,
+      "typeCast": true
+    }
   },
   "test": {
     "username": "usuario_exemplo",
@@ -13,7 +19,13 @@
     "database": "test_despesas_db",
     "host": "database",
     "dialect": "postgres",
-    "port": 5432
+    "port": 5432,
+    "timezone": "-03:00",
+    "dialectOptions": {
+      "useUTC": false,
+      "dateStrings": true,
+      "typeCast": true
+    }
   },
   "production": {
     "username": "usuario_exemplo",
@@ -21,6 +33,12 @@
     "database": "prod_despesas_db",
     "host": "database",
     "dialect": "postgres",
-    "port": 5432
+    "port": 5432,
+    "timezone": "-03:00",
+    "dialectOptions": {
+      "useUTC": false,
+      "dateStrings": true,
+      "typeCast": true
+    }
   }
 }

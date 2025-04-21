@@ -47,6 +47,9 @@ services:
       - "5432:5432"  # Porta padrão liberada no host
     env_file:
       - .env
+    environment:
+      - TZ=America/Sao_Paulo
+      - PGTZ=America/Sao_Paulo  # Opcional, reforça timezone para Postgres >= 12
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:

@@ -1,4 +1,4 @@
-const { Despesa } = require('../models'); // Importa corretamente do index.js, que faz as associações
+const { Despesa } = require('../models');
 
 // Listar todas as despesas do usuário autenticado
 exports.getDespesas = async (req, res) => {
@@ -34,12 +34,13 @@ exports.getDespesaById = async (req, res) => {
 exports.createDespesa = async (req, res) => {
   try {
     const { descricao, valor, data, categoria } = req.body;
+    // categoria já chega slug do frontend!
     const novaDespesa = await Despesa.create({
       descricao,
       valor,
       data,
       categoria,
-      userId: req.user.id // Associa ao usuário logado
+      userId: req.user.id
     });
     res.status(201).json(novaDespesa);
   } catch (error) {
@@ -60,7 +61,7 @@ exports.updateDespesa = async (req, res) => {
       despesa.descricao = descricao;
       despesa.valor = valor;
       despesa.data = data;
-      despesa.categoria = categoria;
+      despesa.categoria = categoria; // já normalizada!
       await despesa.save();
       res.json(despesa);
     } else {
