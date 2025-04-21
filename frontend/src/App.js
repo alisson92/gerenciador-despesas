@@ -1,24 +1,40 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import Header from "./components/Header";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Relatorios from "./pages/Relatorios";
 
-// Este App.js organiza todas as rotas do sistema
-function App() {
+function AppContent() {
+  const location = useLocation();
+  // Liste abaixo os caminhos em que NÃO quer mostrar o Header
+  const hideHeaderPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
+
+  const hideHeader = hideHeaderPaths.includes(location.pathname);
+
   return (
-    <Router>
+    <>
+      {!hideHeader && <Header />}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        {/* qualquer URL desconhecida também vai para /login */}
+        <Route path="/relatorios" element={<Relatorios />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
