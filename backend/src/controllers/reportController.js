@@ -107,26 +107,51 @@ exports.exportToPDF = async (req, res) => {
   try {
     const despesas = await Despesa.findAll({ where: filters, raw: true });
     const doc = new PDFDocument({ margin: 30, size: 'A4' });
+
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="relatorio_despesas.pdf"');
     doc.pipe(res);
 
-    doc.fontSize(18).text('Relatório de Despesas', { align: 'center' }).moveDown();
+    const PAGE_HEIGHT = 800, HEADER_Y = 60; // Ajuste conforme fonte/tamanho da página
+    let y = 40;
 
-    doc.fontSize(12)
-      .text('Descrição', 30, doc.y, { width: 200 })
-      .text('Valor', 240, doc.y, { width: 65 })
-      .text('Data', 305, doc.y, { width: 85 })
-      .text('Categoria', 390, doc.y, { width: 100 });
-    doc.moveDown(0.5);
-    doc.moveTo(30, doc.y).lineTo(550, doc.y).stroke();
+    // Cabeçalho
+    const desenhaCabecalho = () => {
+      doc.fontSize(18).text('Relatório de Despesas', { align: 'center' }); 
+      y = doc.y + 8;
+      doc.fontSize(12);
+      doc.text('Descrição', 40, y, { width: 170 });
+      doc.text('Valor', 210, y, { width: 80, align: 'right' });
+      doc.text('Data', 295, y, { width: 80, align: 'center' });
+      doc.text('Categoria', 380, y, { width: 100, align: 'left' });
+      y = doc.y + 5;
+      doc.moveTo(40, y).lineTo(510, y).stroke();
+      y += 5;
+      doc.fontSize(11);
+    };
 
+    desenhaCabecalho();
+
+    // Tabela de despesas (paginada se necessário)
     despesas.forEach(d => {
-      doc.text(d.descricao, 30, doc.y, { width: 200 })
-        .text(d.valor.toFixed(2), 240, doc.y, { width: 65 })
-        .text(new Date(d.data).toLocaleDateString('pt-BR'), 305, doc.y, { width: 85 })
-        .text(d.categoria, 390, doc.y, { width: 100 });
-      doc.moveDown(0.5);
+      if (y > PAGE_HEIGHT - 30) {
+        doc.addPage();
+        y = HEADER_Y;
+        desenhaCabecalho();
+      }
+      doc.text(d.descricao, 40, y, { width: 170 });
+      doc.text(
+        Number(d.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+        210, y, { width: 80, align: 'right' }
+      );
+      doc.text(
+        new Date(d.data).toLocaleDateString('pt-BR'),
+        295, y, { width: 80, align: 'center' }
+      );
+      doc.text(
+        d.categoria, 380, y, { width: 100, align: 'left' }
+      );
+      y = doc.y + 3;
     });
 
     doc.end();

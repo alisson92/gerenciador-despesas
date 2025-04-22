@@ -1,4 +1,3 @@
-// frontend/src/pages/Relatorios.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import {
@@ -173,6 +172,9 @@ const Relatorios = () => {
       }));
   }
 
+  // Totalizador detalhado (para footer da tabela unificada)
+  const totalDetalhes = detalhes.reduce((soma, item) => soma + Number(item.valor), 0);
+
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>Relatórios</Typography>
@@ -236,6 +238,7 @@ const Relatorios = () => {
         }
       </Paper>
 
+      {/* Gráfico */}
       {dataGraf.length > 0 && (
         <Paper sx={{ p: 2, mb: 2, textAlign: 'center' }}>
           <Typography variant="h6" gutterBottom>
@@ -269,46 +272,7 @@ const Relatorios = () => {
         </Paper>
       )}
 
-      {dados.length > 0 && (
-        <Paper sx={{ p: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {Object.keys(dados[0]).map(key => (
-                  <TableCell key={key}>
-                    {key === 'mes'
-                      ? 'Mês'
-                      : key === 'categoria'
-                        ? 'Categoria'
-                        : key === 'total'
-                          ? 'Total'
-                          : key}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {dados.map((item, idx) => (
-                <TableRow key={idx}>
-                  {Object.entries(item).map(([key, val]) => (
-                    <TableCell key={key}>
-                      {key === 'mes'
-                        ? new Date(val).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long' })
-                        : key === 'categoria'
-                          ? categoriaLabels[val] || val
-                          : key === 'total'
-                            ? Number(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                            : val
-                      }
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      )}
-
+      {/* Tabela única: detalhamento (categoria + descrição + valor + data) */}
       {detalhes.length > 0 && (
         <Paper sx={{ p: 2, mt: 2 }}>
           <Typography variant="h6" gutterBottom>
@@ -317,6 +281,7 @@ const Relatorios = () => {
           <Table size="small">
             <TableHead>
               <TableRow>
+                <TableCell>Categoria</TableCell>
                 <TableCell>Descrição</TableCell>
                 <TableCell>Valor</TableCell>
                 <TableCell>Data</TableCell>
@@ -325,6 +290,7 @@ const Relatorios = () => {
             <TableBody>
               {detalhes.map((item, idx) => (
                 <TableRow key={idx}>
+                  <TableCell>{categoriaLabels[item.categoria] || item.categoria}</TableCell>
                   <TableCell>{item.descricao}</TableCell>
                   <TableCell>
                     {Number(item.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
@@ -334,6 +300,16 @@ const Relatorios = () => {
                   </TableCell>
                 </TableRow>
               ))}
+              {/* Totais no rodapé */}
+              <TableRow>
+                <TableCell colSpan={2}><b>Total</b></TableCell>
+                <TableCell>
+                  <b>
+                    {totalDetalhes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </b>
+                </TableCell>
+                <TableCell></TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </Paper>
