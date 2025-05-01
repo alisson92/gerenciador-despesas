@@ -6,7 +6,7 @@ import {
   Container, Box, Card, CardHeader, CardContent, TextField, List, ListItem,
   ListItemText, IconButton, Divider, LinearProgress, Alert, InputAdornment, Typography
 } from '@mui/material';
-import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon, Logout as LogoutIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DoneIcon from '@mui/icons-material/Done';
@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [reload, setReload] = useState(false);
   const [orcamento, setOrcamento] = useState(0);
-  const [orcamentoInput, setOrcamentoInput] = useState(''); // Inicializa como string vazia
+  const [orcamentoInput, setOrcamentoInput] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
@@ -97,7 +97,7 @@ const Dashboard = () => {
   };
 
   const handleEditBudget = () => {
-    setOrcamentoInput(orcamento.toString()); // Passa o valor do orçamento atual para o campo de edição
+    setOrcamentoInput(orcamento.toString());
     setIsEditing(true);
     setSaveMsg('');
   };
@@ -105,12 +105,12 @@ const Dashboard = () => {
   const handleSaveBudget = () => {
     setSaveMsg('Salvando...');
     axios.put(`${process.env.REACT_APP_API_URL}/users/me/orcamento`,
-      { orcamento: orcamentoInput },
+      { orcamento: Number(orcamentoInput) },
       { headers: { Authorization: `Bearer ${token}` } }
     )
       .then(response => {
         setOrcamento(response.data.orcamento);
-        setOrcamentoInput(response.data.orcamento.toString()); // Atualiza o campo com o novo valor
+        setOrcamentoInput(response.data.orcamento.toString());
         setIsEditing(false);
         setSaveMsg(response.data.message || 'Orçamento salvo com sucesso!');
       })
@@ -126,10 +126,7 @@ const Dashboard = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h4" component="h1">
-          {/* Título removido */}
-        </Typography>
-        {/* Botão "Sair" está no Header.js */}
+        <Typography variant="h4" component="h1"></Typography>
       </Box>
 
       <Card
@@ -169,7 +166,7 @@ const Dashboard = () => {
               label="Orçamento Mensal"
               type="number"
               variant="outlined"
-              value={isEditing ? orcamentoInput : orcamento} // Exibir o valor do orçamento ao editar
+              value={isEditing ? (orcamentoInput === '0' ? '' : orcamentoInput) : orcamento}
               onChange={e => setOrcamentoInput(e.target.value)}
               InputProps={{
                 startAdornment: <InputAdornment position="start">R$</InputAdornment>,
@@ -178,6 +175,7 @@ const Dashboard = () => {
               disabled={!isEditing}
               sx={{ width: 200 }}
               helperText="Defina seu limite de gastos neste mês"
+              placeholder={isEditing ? 'Digite o valor' : ''}
             />
           </Box>
           {saveMsg && (
@@ -317,3 +315,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
