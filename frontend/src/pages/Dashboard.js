@@ -6,7 +6,7 @@ import {
   Container, Box, Card, CardHeader, CardContent, TextField, List, ListItem,
   ListItemText, IconButton, Divider, LinearProgress, Alert, InputAdornment, Typography
 } from '@mui/material';
-import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DoneIcon from '@mui/icons-material/Done';
@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [reload, setReload] = useState(false);
   const [orcamento, setOrcamento] = useState(0);
-  const [orcamentoInput, setOrcamentoInput] = useState('');
+  const [orcamentoInput, setOrcamentoInput] = useState(''); // Inicializa como string vazia
   const [isEditing, setIsEditing] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
@@ -97,7 +97,7 @@ const Dashboard = () => {
   };
 
   const handleEditBudget = () => {
-    setOrcamentoInput(orcamento);
+    setOrcamentoInput(orcamento.toString()); // Passa o valor do orçamento atual para o campo de edição
     setIsEditing(true);
     setSaveMsg('');
   };
@@ -110,6 +110,7 @@ const Dashboard = () => {
     )
       .then(response => {
         setOrcamento(response.data.orcamento);
+        setOrcamentoInput(response.data.orcamento.toString()); // Atualiza o campo com o novo valor
         setIsEditing(false);
         setSaveMsg(response.data.message || 'Orçamento salvo com sucesso!');
       })
@@ -168,7 +169,7 @@ const Dashboard = () => {
               label="Orçamento Mensal"
               type="number"
               variant="outlined"
-              value={isEditing ? orcamentoInput : orcamento}
+              value={isEditing ? orcamentoInput : orcamento} // Exibir o valor do orçamento ao editar
               onChange={e => setOrcamentoInput(e.target.value)}
               InputProps={{
                 startAdornment: <InputAdornment position="start">R$</InputAdornment>,
