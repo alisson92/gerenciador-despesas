@@ -28,12 +28,12 @@ const Header = () => {
       <h1 style={{ display: 'inline' }}>Gerenciador de Despesas</h1>
       <Button
         variant="contained"
-        style={{ position: 'absolute', right: '10px', top: '10px', width: '80px', height: '40px', backgroundColor: 'white', color: 'black', fontWeight: 'bold' }} 
+        style={{ position: 'absolute', right: '10px', top: '10px', width: '80px', height: '40px', backgroundColor: 'white', color: 'black', fontWeight: 'bold' }}
         onClick={handleLogout}
       >
         <LogoutIcon /> Sair
       </Button>
-      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer} sx={{ width: '400px' }}> {/* Aumentar a largura para 400px ou mais */}
         <List>
           <ListItem button component={Link} to="/dashboard">
             <ListItemText primary="Dashboard" />
@@ -42,7 +42,7 @@ const Header = () => {
             <ListItemText primary="Relatórios" />
           </ListItem>
           <ListItem button component={Link} to="/login">
-            <ListItemText primary="Login" />
+            <ListItemText primary="Logoff" />
           </ListItem>
         </List>
       </Drawer>
