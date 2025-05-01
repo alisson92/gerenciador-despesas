@@ -3,10 +3,10 @@ import ExpenseForm from '../components/ExpenseForm';
 import ExpenseEditModal from '../components/ExpenseEditModal';
 import ExpenseChart from '../components/ExpenseChart';
 import {
-  Container, Typography, Box, Card, CardHeader, CardContent, TextField, Button, List, ListItem,
-  ListItemText, IconButton, Divider, LinearProgress, Alert, InputAdornment
+  Container, Box, Card, CardHeader, CardContent, TextField, List, ListItem,
+  ListItemText, IconButton, Divider, LinearProgress, Alert, InputAdornment, Typography
 } from '@mui/material';
-import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon, Logout as LogoutIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DoneIcon from '@mui/icons-material/Done';
@@ -18,8 +18,8 @@ import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [reload, setReload] = useState(false);
-  const [orcamento, setOrcamento] = useState(0); // orçamento mensal do usuário
-  const [orcamentoInput, setOrcamentoInput] = useState(0);
+  const [orcamento, setOrcamento] = useState(0);
+  const [orcamentoInput, setOrcamentoInput] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
@@ -28,7 +28,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
-  // Busca despesas
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -45,7 +44,6 @@ const Dashboard = () => {
     fetchExpenses();
   }, [reload, token, navigate]);
 
-  // Busca orçamento do usuário ao carregar/dashboard ou reload
   useEffect(() => {
     if (token) {
       axios.get(`${process.env.REACT_APP_API_URL}/users/me/orcamento`, {
@@ -79,6 +77,7 @@ const Dashboard = () => {
     setExpenseToEdit(expense);
     setShowEditModal(true);
   };
+
   const closeEditModal = () => {
     setExpenseToEdit(null);
     setShowEditModal(false);
@@ -97,12 +96,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
-
-  // Handlers para orçamento com integração backend
   const handleEditBudget = () => {
     setOrcamentoInput(orcamento);
     setIsEditing(true);
@@ -127,26 +120,17 @@ const Dashboard = () => {
       });
   };
 
-  // Cálculo para alerta/progresso
   const totalDespesas = expenses.reduce((sum, expense) => sum + expense.valor, 0);
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Typography variant="h4" component="h1">
-          🎉 Gerenciador de Despesas 🎉
+          {/* Título removido */}
         </Typography>
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<LogoutIcon />}
-          onClick={handleLogout}
-        >
-          Sair
-        </Button>
+        {/* Botão "Sair" está no Header.js */}
       </Box>
 
-      {/* Orçamento Mensal, Saldo e Alerta */}
       <Card
         sx={{
           mb: 4,
@@ -185,7 +169,7 @@ const Dashboard = () => {
               type="number"
               variant="outlined"
               value={isEditing ? orcamentoInput : orcamento}
-              onChange={e => setOrcamentoInput(parseFloat(e.target.value) || 0)}
+              onChange={e => setOrcamentoInput(e.target.value)}
               InputProps={{
                 startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                 readOnly: !isEditing,
@@ -250,7 +234,6 @@ const Dashboard = () => {
                 : "Defina seu orçamento"}
             </Typography>
           </Box>
-          {/* Alertas de aproximação/estouro de orçamento */}
           {orcamento > 0 && totalDespesas >= orcamento * 0.8 && totalDespesas < orcamento && (
             <Alert severity="warning" sx={{ mt: 2 }}>
               Atenção: você está atingindo seu limite de orçamento!
@@ -264,25 +247,22 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Gráfico de Despesas */}
       <Card sx={{ mb: 4 }}>
-        <CardHeader title="Despesas por Categoria" style={{ backgroundColor: '#FFBB28', color: 'black' }} />
+        <CardHeader title="Despesas por Categoria" style={{ backgroundColor: '#1976D2', color: 'white' }} />
         <CardContent>
           <ExpenseChart expenses={expenses} />
         </CardContent>
       </Card>
 
-      {/* Formulário para Adicionar Despesas */}
       <Card sx={{ mb: 4 }}>
-        <CardHeader title="Adicionar Despesa" style={{ backgroundColor: '#4CAF50', color: 'white' }} />
+        <CardHeader title="Adicionar Despesa" style={{ backgroundColor: '#1976D2', color: 'white' }} />
         <CardContent>
           <ExpenseForm onAdd={handleReload} />
         </CardContent>
       </Card>
 
-      {/* Lista de Despesas */}
       <Card>
-        <CardHeader title="Lista de Despesas" style={{ backgroundColor: '#9E9E9E', color: 'white' }} />
+        <CardHeader title="Lista de Despesas" style={{ backgroundColor: '#1976D2', color: 'white' }} />
         <CardContent>
           {expenses.length > 0 ? (
             <List>
@@ -325,7 +305,6 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Modal para Editar Despesa */}
       <ExpenseEditModal
         show={showEditModal}
         onClose={closeEditModal}

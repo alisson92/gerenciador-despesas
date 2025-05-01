@@ -14,7 +14,7 @@ const ExpenseForm = ({ onAdd }) => {
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [data, setData] = useState('');
-  const [categoria, setCategoria] = useState('alimentacao'); // valor padrão já normalizado
+  const [categoria, setCategoria] = useState('alimentacao');
   const [erro, setErro] = useState('');
 
   const token = localStorage.getItem('token');
@@ -66,6 +66,7 @@ const ExpenseForm = ({ onAdd }) => {
           value={valor}
           onChange={(e) => setValor(e.target.value)}
           required
+          placeholder="Digite o valor"
         />
       </div>
       <div className="form-group mb-3">
