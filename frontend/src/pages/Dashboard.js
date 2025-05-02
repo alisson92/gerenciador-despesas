@@ -4,7 +4,8 @@ import ExpenseEditModal from '../components/ExpenseEditModal';
 import ExpenseChart from '../components/ExpenseChart';
 import {
   Container, Box, Card, CardHeader, CardContent, TextField, List, ListItem,
-  ListItemText, IconButton, Divider, LinearProgress, Alert, InputAdornment, Typography
+  ListItemText, IconButton, Divider, LinearProgress, Alert, InputAdornment,
+  Typography
 } from '@mui/material';
 import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -124,185 +125,198 @@ const Dashboard = () => {
   const totalDespesas = expenses.reduce((sum, expense) => sum + expense.valor, 0);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Typography variant="h4" component="h1"></Typography>
       </Box>
 
-      <Card
-        sx={{
-          mb: 4,
-          boxShadow: orcamento > 0 && totalDespesas >= orcamento
-            ? '0 0 16px 2px #d32f2f'
-            : orcamento > 0 && totalDespesas >= orcamento * 0.8
-              ? '0 0 12px 2px #ff9800'
-              : '0 0 6px 1px #388e3c'
-        }}
-      >
-        <CardHeader
-          title={(
-            <Box display="flex" alignItems="center">
-              <AttachMoneyIcon sx={{ mr: 1, color: '#388e3c' }} />
-              <Typography variant="h6" component="div" sx={{ flex: 1 }}>
-                Orçamento Mensal
-              </Typography>
-              {!isEditing && (
-                <IconButton onClick={handleEditBudget} aria-label="Editar orçamento">
-                  <EditIcon />
-                </IconButton>
-              )}
-              {isEditing && (
-                <IconButton onClick={handleSaveBudget} aria-label="Salvar orçamento">
-                  <SaveIcon />
-                </IconButton>
-              )}
+      {/* Primeira linha: Orçamento Mensal e Adicionar Despesa usando Flexbox */}
+      <Box sx={{ display: 'flex', gap: 2, mb: 4, width: '100%' }}>
+        <Card
+          sx={{
+            flex: 1,
+            height: '100%',
+            boxShadow: orcamento > 0 && totalDespesas >= orcamento
+              ? '0 0 16px 2px #d32f2f'
+              : orcamento > 0 && totalDespesas >= orcamento * 0.8
+                ? '0 0 12px 2px #ff9800'
+                : '0 0 6px 1px #388e3c'
+          }}
+        >
+          <CardHeader
+            title={(
+              <Box display="flex" alignItems="center">
+                <AttachMoneyIcon sx={{ mr: 1, color: '#388e3c' }} />
+                <Typography variant="h6" component="div" sx={{ flex: 1 }}>
+                  Orçamento Mensal
+                </Typography>
+                {!isEditing && (
+                  <IconButton onClick={handleEditBudget} aria-label="Editar orçamento">
+                    <EditIcon />
+                  </IconButton>
+                )}
+                {isEditing && (
+                  <IconButton onClick={handleSaveBudget} aria-label="Salvar orçamento">
+                    <SaveIcon />
+                  </IconButton>
+                )}
+              </Box>
+            )}
+            style={{ backgroundColor: '#1976D2', color: 'white' }}
+          />
+          <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Box mb={2}>
+              <TextField
+                label="Orçamento Mensal"
+                type="number"
+                variant="outlined"
+                value={isEditing ? (orcamentoInput === '0' ? '' : orcamentoInput) : orcamento}
+                onChange={e => setOrcamentoInput(e.target.value)}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  readOnly: !isEditing,
+                }}
+                disabled={!isEditing}
+                sx={{ width: 200 }}
+                helperText="Defina seu limite de gastos neste mês"
+                placeholder={isEditing ? 'Digite o valor' : ''}
+              />
             </Box>
-          )}
-          style={{ backgroundColor: '#1976D2', color: 'white' }}
-        />
-        <CardContent>
-          <Box mb={2}>
-            <TextField
-              label="Orçamento Mensal"
-              type="number"
-              variant="outlined"
-              value={isEditing ? (orcamentoInput === '0' ? '' : orcamentoInput) : orcamento}
-              onChange={e => setOrcamentoInput(e.target.value)}
-              InputProps={{
-                startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                readOnly: !isEditing,
-              }}
-              disabled={!isEditing}
-              sx={{ width: 200 }}
-              helperText="Defina seu limite de gastos neste mês"
-              placeholder={isEditing ? 'Digite o valor' : ''}
-            />
-          </Box>
-          {saveMsg && (
-            <Alert severity={saveMsg.startsWith('Erro') ? "error" : "success"} sx={{ mb: 2 }}>{saveMsg}</Alert>
-          )}
-          {orcamento > 0 && (
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              {totalDespesas < orcamento * 0.8 && <DoneIcon color="success" />}
-              {totalDespesas >= orcamento * 0.8 && totalDespesas < orcamento && <WarningAmberIcon sx={{ color: '#ff9800' }} />}
-              {totalDespesas >= orcamento && <ErrorIcon color="error" />}
-              <Typography
-                variant="body2"
-                color={
-                  totalDespesas < orcamento * 0.8 ? "#388e3c"
-                    : totalDespesas < orcamento ? "#ff9800"
-                      : "#d32f2f"
-                }
-                fontWeight="bold"
-              >
-                {
-                  totalDespesas < orcamento * 0.8 ? 'Confortável'
-                    : totalDespesas < orcamento ? 'No Limite'
-                      : 'Estourado!'
-                }
-              </Typography>
-            </Box>
-          )}
-          <Typography variant="h6">
-            Total de Despesas: {totalDespesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </Typography>
-          <Typography variant="h6">
-            Saldo Atual: {(orcamento - totalDespesas).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </Typography>
-          <Box mt={2}>
-            <LinearProgress
-              variant="determinate"
-              value={orcamento > 0 ? Math.min((totalDespesas / orcamento) * 100, 100) : 0}
-              sx={{
-                height: 12,
-                borderRadius: 4,
-                bgcolor: '#e0e0e0',
-                '& .MuiLinearProgress-bar': {
-                  bgcolor:
-                    totalDespesas < orcamento * 0.8
-                      ? '#388e3c'
-                      : totalDespesas < orcamento
-                        ? '#ff9800'
-                        : '#d32f2f'
-                }
-              }}
-            />
-            <Typography sx={{ mt: 1, textAlign: 'right', fontWeight: 'bold' }}>
-              {orcamento > 0
-                ? `${Math.min((totalDespesas / orcamento) * 100, 100).toFixed(1).replace('.', ',')}% usado`
-                : "Defina seu orçamento"}
+            {saveMsg && (
+              <Alert severity={saveMsg.startsWith('Erro') ? "error" : "success"} sx={{ mb: 2 }}>{saveMsg}</Alert>
+            )}
+            {orcamento > 0 && (
+              <Box display="flex" alignItems="center" gap={1} mb={2}>
+                {totalDespesas < orcamento * 0.8 && <DoneIcon color="success" />}
+                {totalDespesas >= orcamento * 0.8 && totalDespesas < orcamento && <WarningAmberIcon sx={{ color: '#ff9800' }} />}
+                {totalDespesas >= orcamento && <ErrorIcon color="error" />}
+                <Typography
+                  variant="body2"
+                  color={
+                    totalDespesas < orcamento * 0.8 ? "#388e3c"
+                      : totalDespesas < orcamento ? "#ff9800"
+                        : "#d32f2f"
+                  }
+                  fontWeight="bold"
+                >
+                  {
+                    totalDespesas < orcamento * 0.8 ? 'Confortável'
+                      : totalDespesas < orcamento ? 'No Limite'
+                        : 'Estourado!'
+                  }
+                </Typography>
+              </Box>
+            )}
+            <Typography variant="h6">
+              Total de Despesas: {totalDespesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </Typography>
-          </Box>
-          {orcamento > 0 && totalDespesas >= orcamento * 0.8 && totalDespesas < orcamento && (
-            <Alert severity="warning" sx={{ mt: 2 }}>
-              Atenção: você está atingindo seu limite de orçamento!
-            </Alert>
-          )}
-          {orcamento > 0 && totalDespesas >= orcamento && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              Orçamento ultrapassado! Reveja seus gastos.
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
+            <Typography variant="h6">
+              Saldo Atual: {(orcamento - totalDespesas).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </Typography>
+            <Box mt={2}>
+              <LinearProgress
+                variant="determinate"
+                value={orcamento > 0 ? Math.min((totalDespesas / orcamento) * 100, 100) : 0}
+                sx={{
+                  height: 12,
+                  borderRadius: 4,
+                  bgcolor: '#e0e0e0',
+                  '& .MuiLinearProgress-bar': {
+                    bgcolor:
+                      totalDespesas < orcamento * 0.8
+                        ? '#388e3c'
+                        : totalDespesas < orcamento
+                          ? '#ff9800'
+                          : '#d32f2f'
+                  }
+                }}
+              />
+              <Typography sx={{ mt: 1, textAlign: 'right', fontWeight: 'bold' }}>
+                {orcamento > 0
+                  ? `${Math.min((totalDespesas / orcamento) * 100, 100).toFixed(1).replace('.', ',')}% usado`
+                  : "Defina seu orçamento"}
+              </Typography>
+            </Box>
+            {orcamento > 0 && totalDespesas >= orcamento * 0.8 && totalDespesas < orcamento && (
+              <Alert severity="warning" sx={{ mt: 2 }}>
+                Atenção: você está atingindo seu limite de orçamento!
+              </Alert>
+            )}
+            {orcamento > 0 && totalDespesas >= orcamento && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                Orçamento ultrapassado! Reveja seus gastos.
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
 
-      <Card sx={{ mb: 4 }}>
-        <CardHeader title="Despesas por Categoria" style={{ backgroundColor: '#1976D2', color: 'white' }} />
-        <CardContent>
-          <ExpenseChart expenses={expenses} />
-        </CardContent>
-      </Card>
+        <Card
+          sx={{
+            flex: 1,
+            height: '100%'
+          }}
+        >
+          <CardHeader title="Adicionar Despesa" style={{ backgroundColor: '#1976D2', color: 'white' }} />
+          <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <ExpenseForm onAdd={handleReload} />
+            {/* Adicione aqui algum elemento vazio ou espaçador se o formulário for muito menor */}
+          </CardContent>
+        </Card>
+      </Box>
 
-      <Card sx={{ mb: 4 }}>
-        <CardHeader title="Adicionar Despesa" style={{ backgroundColor: '#1976D2', color: 'white' }} />
-        <CardContent>
-          <ExpenseForm onAdd={handleReload} />
-        </CardContent>
-      </Card>
+      {/* Segunda linha: Despesas por Categoria e Lista de Despesas usando Flexbox */}
+      <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+        <Card sx={{ flex: 1, height: '100%' }}>
+          <CardHeader title="Despesas por Categoria" style={{ backgroundColor: '#1976D2', color: 'white' }} />
+          <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <ExpenseChart expenses={expenses} />
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader title="Lista de Despesas" style={{ backgroundColor: '#1976D2', color: 'white' }} />
-        <CardContent>
-          {expenses.length > 0 ? (
-            <List>
-              {expenses.map((expense) => (
-                <React.Fragment key={expense.id}>
-                  <ListItem
-                    secondaryAction={
-                      <Box>
-                        <IconButton
-                          edge="end"
-                          aria-label="edit"
-                          onClick={() => openEditModal(expense)}
-                          sx={{ color: '#FFC107' }}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => deleteExpense(expense.id)}
-                          sx={{ color: '#F44336' }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Box>
-                    }
-                  >
-                    <ListItemText
-                      primary={`${expense.descricao} - ${expense.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`}
-                      secondary={`Data: ${new Date(expense.data).toLocaleDateString()}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                </React.Fragment>
-              ))}
-            </List>
-          ) : (
-            <Typography variant="body1" color="text.secondary">Nenhuma despesa encontrada.</Typography>
-          )}
-        </CardContent>
-      </Card>
+        <Card sx={{ flex: 1, height: '100%' }}>
+          <CardHeader title="Lista de Despesas" style={{ backgroundColor: '#1976D2', color: 'white' }} />
+          <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            {expenses.length > 0 ? (
+              <List>
+                {expenses.map((expense) => (
+                  <React.Fragment key={expense.id}>
+                    <ListItem
+                      secondaryAction={
+                        <Box>
+                          <IconButton
+                            edge="end"
+                            aria-label="edit"
+                            onClick={() => openEditModal(expense)}
+                            sx={{ color: '#FFC107' }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => deleteExpense(expense.id)}
+                            sx={{ color: '#F44336' }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      }
+                    >
+                      <ListItemText
+                        primary={`${expense.descricao} - ${expense.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`}
+                        secondary={`Data: ${new Date(expense.data).toLocaleDateString()}`}
+                      />
+                    </ListItem>
+                    <Divider />
+                  </React.Fragment>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body1" color="text.secondary">Nenhuma despesa encontrada.</Typography>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
 
       <ExpenseEditModal
         show={showEditModal}
@@ -315,4 +329,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
