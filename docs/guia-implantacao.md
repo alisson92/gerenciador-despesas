@@ -87,7 +87,7 @@ docker compose up -d --build
 
 ### Acessos
 
-- **Frontend**: http://localhost:3000  
+- **Frontend**: http://localhost:3001  
 - **Backend (Swagger)**: http://localhost:3000/api-docs
 
 ---
@@ -108,7 +108,7 @@ POSTGRES_PORT=5432
 
 EMAIL_USER=seuemail@gmail.com
 EMAIL_PASS=senha_de_app
-FRONTEND_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:3001
 ```
 
 ---
